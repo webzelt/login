@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>login</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"/>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    form {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    input, label {
+      width: 100%;
+      margin-bottom: 15px;
+      display: block;
+    }
+    input {
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #3085d6;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <form id="formulario">
+    <h2>Formulario de Registro</h2>
+    <label for="nombre">Nombre:</label>
+    <input type="text" id="nombre" required>
+
+    <label for="telefono">Teléfono:</label>
+    <input type="tel" id="telefono" required>
+
+    <label for="ubicacion">País o Ciudad:</label>
+    <input type="text" id="ubicacion" required>
+
+    <label for="correo">Correo:</label>
+    <input type="email" id="correo" required>
+
+    <label for="contrasena">Contraseña:</label>
+    <input type="text" id="contrasena" required>
+
+    <button type="submit">Enviar</button>
+  </form>
+
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- html2pdf -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <script>
+    document.getElementById("formulario").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const nombre = document.getElementById("nombre").value;
+      const telefono = document.getElementById("telefono").value;
+      const ubicacion = document.getElementById("ubicacion").value;
+      const correo = document.getElementById("correo").value;
+      const contrasena = document.getElementById("contrasena").value;
+
+      const tablaHTML = `
+        <div style="font-family: Arial; padding: 20px;">
+          <h2 style="text-align:center;">Datos Ingresados</h2>
+          <table style="width:100%; border-collapse: collapse;">
+            <thead>
+              <tr style="background-color: #f0f0f0;">
+                <th style="border: 1px solid #ccc; padding: 10px;">Campo</th>
+                <th style="border: 1px solid #ccc; padding: 10px;">Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style="border: 1px solid #ccc; padding: 10px;">Nombre</td><td style="border: 1px solid #ccc; padding: 10px;">${nombre}</td></tr>
+              <tr><td style="border: 1px solid #ccc; padding: 10px;">Teléfono</td><td style="border: 1px solid #ccc; padding: 10px;">${telefono}</td></tr>
+              <tr><td style="border: 1px solid #ccc; padding: 10px;">País o Ciudad</td><td style="border: 1px solid #ccc; padding: 10px;">${ubicacion}</td></tr>
+              <tr><td style="border: 1px solid #ccc; padding: 10px;">Correo</td><td style="border: 1px solid #ccc; padding: 10px;">${correo}</td></tr>
+              <tr><td style="border: 1px solid #ccc; padding: 10px;">Contraseña</td><td style="border: 1px solid #ccc; padding: 10px;">${contrasena}</td></tr>
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      Swal.fire({
+        title: 'Datos ingresados',
+        html: `
+          <p><strong>Nombre:</strong> ${nombre}</p>
+          <p><strong>Teléfono:</strong> ${telefono}</p>
+          <p><strong>País o Ciudad:</strong> ${ubicacion}</p>
+          <p><strong>Correo:</strong> ${correo}</p>
+          <p><strong>Contraseña:</strong> ${contrasena}</p>
+          <button id="descargarPDF" class="swal2-confirm swal2-styled" style="background-color:#28a745; margin-top:10px;">
+            Descargar PDF
+          </button>
+        `,
+        showConfirmButton: false,
+        didOpen: () => {
+          document.getElementById('descargarPDF').addEventListener('click', () => {
+            const contenidoPDF = document.createElement("div");
+            contenidoPDF.innerHTML = tablaHTML;
+            html2pdf().from(contenidoPDF).set({
+              margin: 10,
+              filename: 'datos_ingresados.pdf',
+              image: { type: 'jpeg', quality: 0.98 },
+              html2canvas: { scale: 2 },
+              jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            }).save();
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
